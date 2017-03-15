@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "57318706096",
+    "firebase_url": "https://amiable-aquifer-157201.firebaseio.com",
+    "project_id": "amiable-aquifer-157201",
+    "storage_bucket": "amiable-aquifer-157201.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:57318706096:android:2d69221fd466fc33",
+        "android_client_info": {
+          "package_name": "com.example.username.todoapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "57318706096-idsftkfnbudo049tbet9862n5j1flkdb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVLSE-GnyZxbdEvDWPRSIvL-F9eo_2aSM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

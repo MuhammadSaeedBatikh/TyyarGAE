@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Choice</title>
+</head>
+<body>
+<form action="ChoiceServlet" name="choiceForm" method="post">
+    <fieldset>
+        <legend>Choice information:</legend>
+        name:<br>
+        <input type="text" name="name" value=""><br>
+        price:<br>
+        <input type="number" name="price" step="any" value=""><br>
+        description:<br>
+        <input type="text" name="description" value=""><br>
+        add to price:<br>
+        <input type="checkbox" name="addToPrice" value="true"><br>
+        avaliable:<br>
+        <input type="checkbox" name="avaliable" value="true"><br><br>
+        <input type="submit" value="Submit">
+        <input type="hidden" name="formName" value="restaurantForm">
+    </fieldset>
+</form>
+</body>
+</html>

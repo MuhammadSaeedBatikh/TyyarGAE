@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Product</title>
+</head>
+<body>
+<form action="ProductServlet" name="ProductForm" method="post">
+    <fieldset>
+        <legend>Product information:</legend>
+        name:<br>
+        <input type="text" name="name" value=""><br>
+        price:<br>
+        <input type="number" name="price" step="any" value=""><br>
+        description:<br>
+        <input type="text" name="description" value=""><br>
+        <input type="submit" value="Submit">
+        <input type="hidden" name="formName" value="ProductForm">
+    </fieldset>
+</form>
+</body>
+</html>

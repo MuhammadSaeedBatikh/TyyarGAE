@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Restaurant</title>
+</head>
+<body>
+<form action="RestaurantServlet" name="restaurantForm" method="post">
+    <fieldset>
+        <legend>Restaurant information:</legend>
+        name:<br>
+        <input type="text" name="restaurantName" value=""><br>
+        password:<br>
+        <input type="password" name="restaurantPassword" value=""><br>
+        email:<br>
+        <input type="email" name="restaurantEmail" value=""><br>
+        address:<br>
+        <input type="text" name="restaurantAddress" value=""><br>
+        phone:<br>
+        <input type="text" name="restaurantPhone" value=""><br><br>
+        pricing:<br>
+        <input type="number" name="restaurantpricing" value=""><br><br>
+        imageURL:<br>
+        <input type="text" name="imageURL" value=""><br><br>
+        <input type="submit" value="Submit">
+        <input type="hidden" name="formName" value="restaurantForm">
+    </fieldset>
+</form>
+
+<br><br>
+<a href="index.html">Home</a>
+</body>
+</html>
