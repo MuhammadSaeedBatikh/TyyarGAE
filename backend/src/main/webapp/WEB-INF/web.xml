@@ -95,14 +95,10 @@
         <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
         <init-param>
             <param-name>services</param-name>
-            <param-value>com.example.YourPc.myapplication.backend.apiMethods.OrderAPI
+            <param-value>com.example.YourPc.myapplication.backend.apiMethods.OrderAPI,
+                com.example.YourPc.myapplication.backend.apiMethods.RestaurantAPI,
+                com.example.YourPc.myapplication.backend.apiMethods.PharmacyAPI
             </param-value>
-            <!--
-                        <param-value>com.example.YourPc.myapplication.backend.apiMethods.RestaurantAPI
-                        </param-value>
-                        <param-value>com.example.YourPc.myapplication.backend.apiMethods.PharmacyAPI
-                        </param-value>
-            -->
         </init-param>
     </servlet>
     <servlet-mapping>
@@ -183,6 +179,9 @@
     <filter-mapping>
         <filter-name>ObjectifyFilter</filter-name>
         <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
     <listener>
         <listener-class>com.example.YourPc.myapplication.backend.helpers.OfyHelper</listener-class>

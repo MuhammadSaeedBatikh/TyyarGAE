@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
  * Created by Muhammad Saeed on 3/3/2017.
  */
 public class DeliveryRequestServlet extends HttpServlet {
-    static Logger Log = Logger.getLogger("com.example.guestbook.servlets.appServlets.DeliveryRequestServlet");
+    private static Logger Log = Logger.getLogger("com.example.guestbook.servlets.appServlets.DeliveryRequestServlet");
 
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     }
@@ -89,7 +89,7 @@ public class DeliveryRequestServlet extends HttpServlet {
                     Iterator<DataSnapshot> children = dataSnapshot.getChildren().iterator();
 
                     while (children.hasNext()) {
-                        DataSnapshot childSnapshot = (DataSnapshot) children.next();
+                        DataSnapshot childSnapshot = children.next();
                         todoText = todoText + " * " + childSnapshot.getValue().toString() + "\n";
                     }
 

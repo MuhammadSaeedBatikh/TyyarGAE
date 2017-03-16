@@ -34,7 +34,7 @@ dependencies {
 
 appengine {
     downloadSdk = true
-    httpPort = 8086
+    httpPort 8089
     appcfg {
         oauth2 = true
     }

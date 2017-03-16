@@ -15,7 +15,7 @@ public class Option {
     public
     @Id
     String id;
-    public String Name;//size , spicy etc
+    public String name;//size , spicy etc
     public boolean required;
     public List<Choice> choices = new ArrayList<>();
 
@@ -23,7 +23,7 @@ public class Option {
     }
 
     public Option(String name, boolean required, List<Choice> choices) {
-        Name = name;
+        this.name = name;
         this.required = required;
         this.choices = choices;
         this.id = IdHelper.generateOptionKey(name);
@@ -31,7 +31,7 @@ public class Option {
 
     public Option(String name, boolean required) {
         this.id = IdHelper.generateOptionKey(name);
-        Name = name;
+        this.name = name;
         this.required = required;
     }
 
@@ -40,7 +40,7 @@ public class Option {
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public boolean isRequired() {

@@ -91,7 +91,7 @@ public class RestaurantAPI {
         return query.list();
     }
 
-    @ApiMethod(name = "createRestaurant", path = "createRestaurant", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "createRestaurant", path = "createRestaurant", httpMethod = ApiMethod.HttpMethod.GET)
     public Restaurant createRestaurant(@Named("name") String name, @Named("password") String password,
                                        @Named("email") String email, @Named("phone") String phone,
                                        @Named("address") String address, @Named("pricing") int pricing,
