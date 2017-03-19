@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "263704581829",
+    "firebase_url": "https://tayyar-trial.firebaseio.com",
+    "project_id": "tayyar-trial",
+    "storage_bucket": "tayyar-trial.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:263704581829:android:c5cbb13b5b95aac1",
+        "android_client_info": {
+          "package_name": "com.example.yourpc.tyyargae"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "263704581829-540gnqbl1mcp2l64cnvkkn646h9o97d4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.yourpc.tyyargae",
+            "certificate_hash": "e4f2761a7a681bdb3580aff64ce8b3f8297990cb"
+          }
+        },
+        {
+          "client_id": "263704581829-60kgi3m4oo1u7eohi5ee39mig9qd1het.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0lSyTn57maunX_LZ7Gmcz5LxVGs5Gt7U"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "263704581829-60kgi3m4oo1u7eohi5ee39mig9qd1het.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
