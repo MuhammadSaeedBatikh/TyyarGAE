@@ -3,6 +3,7 @@ package com.example.yourpc.tyyargae;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Button;
 
 import com.appspot.tayyar_trial.pharmacyAPI.PharmacyAPI;
 import com.appspot.tayyar_trial.pharmacyAPI.model.PharmacyViewCollection;
@@ -10,28 +11,29 @@ import com.appspot.tayyar_trial.restaurantAPI.RestaurantAPI;
 import com.appspot.tayyar_trial.restaurantAPI.model.Restaurant;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.IOException;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
-
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
+    private Button button;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initView();
 
-        Observable.fromCallable(this::addRestaurant)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> {
-                    Log.d(TAG, "s = " + s);
-                }, throwable -> Log.e(TAG, "onCreate: ", throwable));
+//        Observable.fromCallable(this::addRestaurant)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(s -> {
+//                    Log.d(TAG, "s = " + s);
+//                }, throwable -> Log.e(TAG, "onCreate: ", throwable));
+
+        button.setOnClickListener(v -> Log.d(TAG, "getToken() = " + FirebaseInstanceId.getInstance().getToken()));
 
     }
 
@@ -61,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
 
         return restaurantAPI.createRestaurant("address", "hu@g.co", "https://tyyarstorage.blob.core.windows.net/merchantsimages/normandy.jpg",
                 "nameA", "pass", "0110", 3).execute();
+    }
+
+    private void initView() {
+        button = (Button) findViewById(R.id.button);
     }
 
     /*private class EndpointsAsyncTask extends AsyncTask<Object, Object, List<Customer>> {
