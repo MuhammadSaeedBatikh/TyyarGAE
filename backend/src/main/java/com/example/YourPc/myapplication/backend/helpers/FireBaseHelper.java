@@ -19,19 +19,19 @@ public class FireBaseHelper {
             MediaType.parse("application/json; charset=utf-8");
     public static final String WEB_API_KEY = "AIzaSyBea8gLbowPRcQCG-MvcQ_V2FbfW1Bmhho";
 
-    private void sendNotification(final String regΤoken) {
+    public static void sendNotification(final String regΤoken,String body) {
         OkHttpClient client = new OkHttpClient();
         JSONObject json = new JSONObject();
         JSONObject dataJson = new JSONObject();
-        dataJson.put("body", "Hi this is sent from device to device");
+        dataJson.put("body", body);
         dataJson.put("title", "dummy title");
         json.put("notification", dataJson);
         json.put("to", regΤoken);
-        RequestBody body = RequestBody.create(JSON, json.toString());
+        RequestBody requestBody = RequestBody.create(JSON, json.toString());
         Request request = new Request.Builder()
                 .header("Authorization", "key=" + Constants.LEGACY_SERVER_KEY)
                 .url("https://fcm.googleapis.com/fcm/send")
-                .post(body)
+                .post(requestBody)
                 .build();
 
         try {
