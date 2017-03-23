@@ -8,6 +8,7 @@ import com.example.YourPc.myapplication.backend.pharmacy.Pharmacy;
 import com.example.YourPc.myapplication.backend.profiles.Customer;
 import com.example.YourPc.myapplication.backend.profiles.Driver;
 import com.example.YourPc.myapplication.backend.restuarant.Restaurant;
+import com.example.YourPc.myapplication.backend.restuarant.RestaurantView;
 import com.example.YourPc.myapplication.backend.restuarant.order.DeliveryRequest;
 import com.example.YourPc.myapplication.backend.restuarant.order.Order;
 import com.google.api.server.spi.config.Api;
@@ -47,7 +48,7 @@ public class OrderAPI {
         return orderAPIInstance;
     }
 
-    @ApiMethod(name = "createOrder", path = "createOrder", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "createOrder", path = "createOrder", httpMethod = ApiMethod.HttpMethod.GET)
     public Order createOrder(@Named("itemID") String itemID,
                              @Named("instructions") String instructions,
                              @Named("itemsNumber") int itemsNumaber,
@@ -61,7 +62,7 @@ public class OrderAPI {
     //Order[] raises and exception
 
 
-    @ApiMethod(name = "getTheNearestDriver", path = "getTheNearestDriver", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "getTheNearestDriver", path = "getTheNearestDriver", httpMethod = ApiMethod.HttpMethod.GET)
     public DeliveryRequest getTheNearestDriver(@Named("deliveryRequestID") String deliveryRequestID) {
         DeliveryRequest deliveryRequest = getDeliveryRequestByID(deliveryRequestID);
         String city = restaurantAPI.getRestaurantByID(deliveryRequest.merchantID).
@@ -85,7 +86,7 @@ public class OrderAPI {
         }
     }
 
-    @ApiMethod(name = "driverRefusesOrder", path = "driverRefusesOrder", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "driverRefusesOrder", path = "driverRefusesOrder", httpMethod = ApiMethod.HttpMethod.GET)
     public DeliveryRequest driverRefusesOrder(@Named("deliveryRequestID") String deliveryRequestID,
                                               @Named("driverID") String driverID) {
         DeliveryRequest deliveryRequest = getDeliveryRequestByID(deliveryRequestID);
@@ -94,21 +95,19 @@ public class OrderAPI {
         return deliveryRequest;
     }
 
-    @ApiMethod(name = "getDeliveryRequestByID", path = "getDeliveryRequestByID", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "getDeliveryRequestByID", path = "getDeliveryRequestByID", httpMethod = ApiMethod.HttpMethod.GET)
     public DeliveryRequest getDeliveryRequestByID(@Named("deliveryRequestID") String deliveryRequestID) {
         Key<DeliveryRequest> deliveryRequestKey = Key.create(DeliveryRequest.class, deliveryRequestID);
-        DeliveryRequest deliveryRequest = ObjectifyService.ofy().load().key(deliveryRequestKey).now();
-        return deliveryRequest;
+        return ObjectifyService.ofy().load().key(deliveryRequestKey).now();
     }
 
-    @ApiMethod(name = "getDriverByID", path = "getDriverByID", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "getDriverByID", path = "getDriverByID", httpMethod = ApiMethod.HttpMethod.GET)
     public Driver getDriverByID(@Named("driverID") String driverID) {
         Key<Driver> driverKey = Key.create(Driver.class, driverID);
-        Driver driver = ObjectifyService.ofy().load().key(driverKey).now();
-        return driver;
+        return ObjectifyService.ofy().load().key(driverKey).now();
     }
 
-    @ApiMethod(name = "createDriver", path = "createDriver", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "createDriver", path = "createDriver", httpMethod = ApiMethod.HttpMethod.GET)
     public Driver createDriver(@Named("name") String name, @Named("password") String password,
                                @Named("email") String email, @Named("city") String city,
                                @Named("phone") String phone, @Named("vehicle") String vehicle,
@@ -118,7 +117,7 @@ public class OrderAPI {
         return driver;
     }
 
-    @ApiMethod(name = "getDriverByName", path = "getDriverByName", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "getDriverByName", path = "getDriverByName", httpMethod = ApiMethod.HttpMethod.GET)
     public Driver getDriverByName(@Named("name") String name) {
         Driver driver;
         Query<Driver> driverQuery = ObjectifyService.ofy().load().type(Driver.class);
@@ -128,7 +127,7 @@ public class OrderAPI {
         return driver;
     }
 
-    @ApiMethod(name = "updateDriverState", path = "updateDriverState", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "updateDriverState", path = "updateDriverState", httpMethod = ApiMethod.HttpMethod.GET)
     public Driver updateDriverState(@Named("idle") boolean idle, @Named("driverID") String driverID) {
         Driver driver = getDriverByID(driverID);
         driver.idle = idle;
@@ -136,7 +135,7 @@ public class OrderAPI {
         return driver;
     }
 
-    @ApiMethod(name = "confirmPickUp", path = "confirmPickUp", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "confirmPickUp", path = "confirmPickUp", httpMethod = ApiMethod.HttpMethod.GET)
     public DeliveryRequest confirmPickUp(@Named("deliveryRequestID") String deliveryRequestID) {
         DeliveryRequest deliveryRequest = getDeliveryRequestByID(deliveryRequestID);
         deliveryRequest.confirmPickUP = true;
@@ -144,33 +143,40 @@ public class OrderAPI {
         return deliveryRequest;
     }
 
-    @ApiMethod(name = "sendNotificationByID", path = "sendNotificationByID", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "sendNotificationByID", path = "sendNotificationByID", httpMethod = ApiMethod.HttpMethod.GET)
     public Object sendNotificationByID(@Named("profileID") String profileID,
                                        @Named("message") String message,
                                        @Named("profileType") ProfileType type) throws IOException {
-        String regToken = getRegisterationToken(type, profileID);
+        String regToken = getRegistrationToken(type, profileID);
         FireBaseHelper.sendNotification(regToken, message);
         return new Object();
     }
 
     //=====================
     //passing unsupported parameter !!
-    @ApiMethod(name = "sendDeliveryRequest", path = "sendDeliveryRequest", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "sendDeliveryRequest", path = "sendDeliveryRequest", httpMethod = ApiMethod.HttpMethod.GET)
     public Object sendDeliveryRequest(DeliveryRequest deliveryRequest) throws IOException {
-        String regToken = getRegisterationToken(deliveryRequest.merchantType,
+        String regToken = getRegistrationToken(deliveryRequest.merchantType,
                 deliveryRequest.merchantID);
         return sendNotificationByRegToken(regToken, "Order");
     }
 
     //=====================
-    @ApiMethod(name = "sendNotificationByRegToken", path = "sendNotificationByRegToken", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "sendNotificationByRegToken", path = "sendNotificationByRegToken", httpMethod = ApiMethod.HttpMethod.GET)
     public Object sendNotificationByRegToken(@Named("regToken") String regToken,
                                              @Named("message") String message) throws IOException {
         FireBaseHelper.sendNotification(regToken, message);
         return new Object();
     }
 
-    private String getRegisterationToken(ProfileType type, String profileID) {
+    @ApiMethod(name = "sendNotificationByRegToken2", path = "sendNotificationByRegToken2", httpMethod = ApiMethod.HttpMethod.GET)
+    public RestaurantView sendNotificationByRegToken2(@Named("zregTok") String regTok,
+                                                      @Named("amess") String mess) throws IOException {
+        FireBaseHelper.sendNotification(regTok, mess);
+        return new RestaurantView("sd", "jjj", "dksajk");
+    }
+
+    private String getRegistrationToken(ProfileType type, String profileID) {
         String regToken = null;
         switch (type) {
             case RESTAURANT:
@@ -184,7 +190,7 @@ public class OrderAPI {
         return regToken;
     }
 
-    @ApiMethod(name = "addRegTokenToProfile", path = "addRegTokenToProfile", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "addRegTokenToProfile", path = "addRegTokenToProfile", httpMethod = ApiMethod.HttpMethod.GET)
     public void addRegTokenToProfile(@Named("profileType") ProfileType type,
                                      @Named("profileID") String profileID,
                                      @Named("regToken") String regToken) {
@@ -202,7 +208,7 @@ public class OrderAPI {
 
             case CUSTOMER:
                 Customer customer = restaurantAPI.getCustomerByID(profileID);
-                customer.regToken=regToken;
+                customer.regToken = regToken;
                 ObjectifyService.ofy().save().entity(customer).now();
         }
     }

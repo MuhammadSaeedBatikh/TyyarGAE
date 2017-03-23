@@ -63,13 +63,13 @@ public class RestaurantAPI {
         return customer;
     }
 
-    @ApiMethod(name = "loadAllCustomers", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "loadAllCustomers", httpMethod = ApiMethod.HttpMethod.GET)
     public List<Customer> queryCustomers() {
         Query<Customer> query = ObjectifyService.ofy().load().type(Customer.class);
         return query.list();
     }
 
-    @ApiMethod(name = "updateCustomerPassword", path = "updateCustomerPassword", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "updateCustomerPassword", path = "updateCustomerPassword", httpMethod = ApiMethod.HttpMethod.GET)
     public Customer updateCustomerPassword(@Named("password") String newPassword, @Named("ID") String customerID) {
         Customer customer = getCustomerByID(customerID);
         customer.password = newPassword;
@@ -77,7 +77,7 @@ public class RestaurantAPI {
         return customer;
     }
 
-    @ApiMethod(name = "updateCustomerEmail", path = "updateCustomerEmail", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "updateCustomerEmail", path = "updateCustomerEmail", httpMethod = ApiMethod.HttpMethod.GET)
     public Customer updateCustomerEmail(@Named("email") String newEmail, @Named("ID") String customerID) {
         Customer customer = getCustomerByID(customerID);
         customer.email = newEmail;
@@ -85,7 +85,7 @@ public class RestaurantAPI {
         return customer;
     }
 
-    @ApiMethod(name = "loadCustomersByName", path = "loadCustomersByName", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "loadCustomersByName", path = "loadCustomersByName", httpMethod = ApiMethod.HttpMethod.GET)
     public List<Customer> loadCustomersByName(@Named("name") String name) {
         Query<Customer> query = ObjectifyService.ofy().load().type(Customer.class).filter("name =", name);
         return query.list();
@@ -103,14 +103,14 @@ public class RestaurantAPI {
         return restaurant;
     }
 
-    @ApiMethod(name = "saveLocation", path = "saveLocation", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "saveLocation", path = "saveLocation", httpMethod = ApiMethod.HttpMethod.GET)
     public Location saveLocation(@Named("adress") String adress, @Named("id") String id) {
         Location location = new Location(10.0, 10.0, adress, "nsr");
         ObjectifyService.ofy().save().entity(location).now();
         return location;
     }
 
-    @ApiMethod(name = "createChoice", path = "createChoice", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "createChoice", path = "createChoice", httpMethod = ApiMethod.HttpMethod.GET)
     public Choice createChoice(@Named("name") String name, @Named("price") double price,
                                @Named("addToPrice") boolean addToPrice, @Named("description") String description,
                                @Named("avaliable") boolean avaliable) {
@@ -119,28 +119,27 @@ public class RestaurantAPI {
         return choice;
     }
 
-    @ApiMethod(name = "getChoiceByID", path = "getChoiceByID", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "getChoiceByID", path = "getChoiceByID", httpMethod = ApiMethod.HttpMethod.GET)
     public Choice getChoiceByID(@Named("id") String id) {
         Key<Choice> choiceKey = Key.create(Choice.class, id);
-        Choice choice = ObjectifyService.ofy().load().key(choiceKey).now();
-        return choice;
+        return ObjectifyService.ofy().load().key(choiceKey).now();
     }
 
-    @ApiMethod(name = "createItem", path = "createItem", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "createItem", path = "createItem", httpMethod = ApiMethod.HttpMethod.GET)
     public Item createItem(@Named("name") String name) {
         Item item = new Item(name);
         ObjectifyService.ofy().save().entity(item).now();
         return item;
     }
 
-    @ApiMethod(name = "getItemByID", path = "getItemByID", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "getItemByID", path = "getItemByID", httpMethod = ApiMethod.HttpMethod.GET)
     public Item getItemByID(@Named("id") String id) {
         Key<Item> itemKey = Key.create(Item.class, id);
         Item item = ObjectifyService.ofy().load().key(itemKey).now();
         return item;
     }
 
-    @ApiMethod(name = "createOption", path = "createOption", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "createOption", path = "createOption", httpMethod = ApiMethod.HttpMethod.GET)
     public Option createOption(@Named("name") String name, @Named("required") boolean required
     ) {
         Option option = new Option(name, required);
@@ -148,14 +147,13 @@ public class RestaurantAPI {
         return option;
     }
 
-    @ApiMethod(name = "getOptionByID", path = "getOptionByID", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "getOptionByID", path = "getOptionByID", httpMethod = ApiMethod.HttpMethod.GET)
     public Option getOptionByID(@Named("id") String id) {
         Key<Option> optionKey = Key.create(Option.class, id);
-        Option option = ObjectifyService.ofy().load().key(optionKey).now();
-        return option;
+        return ObjectifyService.ofy().load().key(optionKey).now();
     }
 
-    @ApiMethod(name = "addChoiceToOption", path = "addChoiceToOption", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "addChoiceToOption", path = "addChoiceToOption", httpMethod = ApiMethod.HttpMethod.GET)
     public Option addChoiceToOption(@Named("optionID") String optionID, @Named("choiceID") String choiceID) {
         Option option = getOptionByID(optionID);
         Choice choice = getChoiceByID(choiceID);
@@ -164,7 +162,7 @@ public class RestaurantAPI {
         return option;
     }
 
-    @ApiMethod(name = "addOptionToItem", path = "addOptionToItem", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "addOptionToItem", path = "addOptionToItem", httpMethod = ApiMethod.HttpMethod.GET)
     public Item addOptionToItem(@Named("itemID") String itemID, @Named("optionID") String optionID) {
         Item item = getItemByID(itemID);
         Option option = getOptionByID(optionID);
@@ -173,28 +171,26 @@ public class RestaurantAPI {
         return item;
     }
 
-    @ApiMethod(name = "createCategory", path = "createCategory", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "createCategory", path = "createCategory", httpMethod = ApiMethod.HttpMethod.GET)
     public Category createCategory(@Named("name") String name) {
         Category category = new Category(name);
         ObjectifyService.ofy().save().entity(category).now();
         return category;
     }
 
-    @ApiMethod(name = "getCategoryByID", path = "getCategoryByID", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "getCategoryByID", path = "getCategoryByID", httpMethod = ApiMethod.HttpMethod.GET)
     public Category getCategoryByID(@Named("id") String id) {
         Key<Category> categoryKey = Key.create(Category.class, id);
-        Category category = ObjectifyService.ofy().load().key(categoryKey).now();
-        return category;
+        return ObjectifyService.ofy().load().key(categoryKey).now();
     }
 
-    @ApiMethod(name = "getRestaurantByID", path = "getRestaurantByID", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "getRestaurantByID", path = "getRestaurantByID", httpMethod = ApiMethod.HttpMethod.GET)
     public Restaurant getRestaurantByID(@Named("id") String id) {
         Key<Restaurant> restaurantKey = Key.create(Restaurant.class, id);
-        Restaurant restaurant = ObjectifyService.ofy().load().key(restaurantKey).now();
-        return restaurant;
+        return ObjectifyService.ofy().load().key(restaurantKey).now();
     }
 
-    @ApiMethod(name = "addItemToCategory", path = "addItemToCategory", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "addItemToCategory", path = "addItemToCategory", httpMethod = ApiMethod.HttpMethod.GET)
     public Category addItemToCategory(@Named("categoryID") String categoryID, @Named("itemID") String itemID) {
         Category category = getCategoryByID(categoryID);
         Item item = getItemByID(itemID);
@@ -204,7 +200,7 @@ public class RestaurantAPI {
         return category;
     }
 
-    @ApiMethod(name = "addCategoryToRestaurant", path = "addCategoryToRestaurant", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "addCategoryToRestaurant", path = "addCategoryToRestaurant", httpMethod = ApiMethod.HttpMethod.GET)
     public Restaurant addCategoryToRestaurant(@Named("Restaurant") String restaurantID,
                                               @Named("categoryID") String categoryID) {
         Restaurant restaurant = getRestaurantByID(restaurantID);
@@ -214,14 +210,14 @@ public class RestaurantAPI {
         return restaurant;
     }
 
-    @ApiMethod(name = "getRestaurantByName", path = "getRestaurantByName", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "getRestaurantByName", path = "getRestaurantByName", httpMethod = ApiMethod.HttpMethod.GET)
     public List<Restaurant> getResturantByName(@Named("name") String name) {
         Query<Restaurant> query = ObjectifyService.ofy().load().type(Restaurant.class).filter("name =", name);
         query = query.order("pricing");
         return query.list();
     }
 
-    @ApiMethod(name = "getAllRestaurantsOrderedByPricing", path = "getAllRestaurantsOrderedByPricing", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "getAllRestaurantsOrderedByPricing", path = "getAllRestaurantsOrderedByPricing", httpMethod = ApiMethod.HttpMethod.GET)
     public List<RestaurantView> getAllResaurantsOrderedByPricing(@Named("from") int from, @Named("to") int to) {
         List<Restaurant> restaurantList = ObjectifyService.ofy().load().type(Restaurant.class).order("pricing").list();
         int size = restaurantList.size();
@@ -242,7 +238,7 @@ public class RestaurantAPI {
         return restaurantViewList;
     }
 
-    @ApiMethod(name = "setRestaurantState", path = "setRestaurantState", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "setRestaurantState", path = "setRestaurantState", httpMethod = ApiMethod.HttpMethod.GET)
     public Restaurant setRestaurantState(@Named("active") boolean active, @Named("restaurantID") String restaurantID) {
         Restaurant restaurant = getRestaurantByID(restaurantID);
         restaurant.active = active;
@@ -250,7 +246,7 @@ public class RestaurantAPI {
         return restaurant;
     }
 
-    @ApiMethod(name = "approveOrder", path = "approveOrder", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "approveOrder", path = "approveOrder", httpMethod = ApiMethod.HttpMethod.GET)
     public BooleanWrapper doesRestaurant(@Named("active") boolean active, @Named("restaurantID") String restaurantID) {
         Restaurant restaurant = getRestaurantByID(restaurantID);
         boolean restaurantState = restaurant.active;
@@ -261,14 +257,14 @@ public class RestaurantAPI {
     }
 
 
-    @ApiMethod(name = "canCustomerOrder", path = "getRestaurantState", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "canCustomerOrder", path = "getRestaurantState", httpMethod = ApiMethod.HttpMethod.GET)
     public BooleanWrapper getRestaurantState(@Named("active") boolean active, @Named("restaurantID") String restaurantID) {
         Restaurant restaurant = getRestaurantByID(restaurantID);
         return new BooleanWrapper(restaurant.active);
     }
 
 
-    /*  @ApiMethod(name = "createRandomCustomer",httpMethod = ApiMethod.HttpMethod.POST)
+    /*  @ApiMethod(name = "createRandomCustomer",httpMethod = ApiMethod.HttpMethod.GET)
     public  List<Customer> createRandomCustomer(){
          ArrayList<Customer> arrayList=new ArrayList<>();
          for (int i=0 ;i<10;i++){
