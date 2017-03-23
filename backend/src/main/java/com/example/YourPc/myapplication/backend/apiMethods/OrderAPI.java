@@ -2,21 +2,25 @@ package com.example.YourPc.myapplication.backend.apiMethods;
 
 
 import com.example.YourPc.myapplication.backend.helpers.Constants;
+import com.example.YourPc.myapplication.backend.helpers.FireBaseHelper;
+import com.example.YourPc.myapplication.backend.helpers.ProfileType;
+import com.example.YourPc.myapplication.backend.pharmacy.Pharmacy;
+import com.example.YourPc.myapplication.backend.profiles.Customer;
 import com.example.YourPc.myapplication.backend.profiles.Driver;
+import com.example.YourPc.myapplication.backend.restuarant.Restaurant;
 import com.example.YourPc.myapplication.backend.restuarant.order.DeliveryRequest;
-import com.example.YourPc.myapplication.backend.restuarant.order.ListOfOrders;
 import com.example.YourPc.myapplication.backend.restuarant.order.Order;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
+import com.google.api.server.spi.config.Named;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.cmd.Query;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.inject.Named;
 
 /**
  * Created by Muhammad Saeed on 3/3/2017.
@@ -29,6 +33,7 @@ import javax.inject.Named;
 )
 public class OrderAPI {
     RestaurantAPI restaurantAPI = RestaurantAPI.getApiSinglton();
+    PharmacyAPI pharmacyAPI = PharmacyAPI.getApiSinglton();
     private static OrderAPI orderAPIInstance;
 
     public OrderAPI() {
@@ -54,24 +59,12 @@ public class OrderAPI {
 
 
     //Order[] raises and exception
-    @ApiMethod(name = "sendDeliveryRequest", path = "sendDeliveryRequest", httpMethod = ApiMethod.HttpMethod.POST)
-    public DeliveryRequest sendDeliveryRequest(ListOfOrders listOfOrders,
-                                               @Named("customerID") String customerID,
-                                               @Named("customerLocationID") String customerLocationID,
-                                               @Named("restaurantID") String restaurantID
-    ) {
-        DeliveryRequest deliveryRequest = new DeliveryRequest(listOfOrders, customerID, restaurantID,
-                customerLocationID);
-        System.out.println("list of orders " + listOfOrders);
-        System.out.println("customer Id " + customerID);
-        System.out.println("restaurant id" + restaurantID);
-        return deliveryRequest;
-    }
+
 
     @ApiMethod(name = "getTheNearestDriver", path = "getTheNearestDriver", httpMethod = ApiMethod.HttpMethod.POST)
     public DeliveryRequest getTheNearestDriver(@Named("deliveryRequestID") String deliveryRequestID) {
         DeliveryRequest deliveryRequest = getDeliveryRequestByID(deliveryRequestID);
-        String city = RestaurantAPI.getApiSinglton().getRestaurantByID(deliveryRequest.restaurantID).
+        String city = restaurantAPI.getRestaurantByID(deliveryRequest.merchantID).
                 location.getCity();
         Query<Driver> driverQuery = ObjectifyService.ofy().load().type(Driver.class).filter("city =", city)
                 .filter("idle =", true);
@@ -151,4 +144,66 @@ public class OrderAPI {
         return deliveryRequest;
     }
 
+    @ApiMethod(name = "sendNotificationByID", path = "sendNotificationByID", httpMethod = ApiMethod.HttpMethod.POST)
+    public Object sendNotificationByID(@Named("profileID") String profileID,
+                                       @Named("message") String message,
+                                       @Named("profileType") ProfileType type) throws IOException {
+        String regToken = getRegisterationToken(type, profileID);
+        FireBaseHelper.sendNotification(regToken, message);
+        return new Object();
+    }
+
+    //=====================
+    //passing unsupported parameter !!
+    @ApiMethod(name = "sendDeliveryRequest", path = "sendDeliveryRequest", httpMethod = ApiMethod.HttpMethod.POST)
+    public Object sendDeliveryRequest(DeliveryRequest deliveryRequest) throws IOException {
+        String regToken = getRegisterationToken(deliveryRequest.merchantType,
+                deliveryRequest.merchantID);
+        return sendNotificationByRegToken(regToken, "Order");
+    }
+
+    //=====================
+    @ApiMethod(name = "sendNotificationByRegToken", path = "sendNotificationByRegToken", httpMethod = ApiMethod.HttpMethod.POST)
+    public Object sendNotificationByRegToken(@Named("regToken") String regToken,
+                                             @Named("message") String message) throws IOException {
+        FireBaseHelper.sendNotification(regToken, message);
+        return new Object();
+    }
+
+    private String getRegisterationToken(ProfileType type, String profileID) {
+        String regToken = null;
+        switch (type) {
+            case RESTAURANT:
+                regToken = restaurantAPI.getRestaurantByID(profileID).getRegToken();
+                break;
+            case PHARMACY:
+                regToken = pharmacyAPI.getPharmacyByID(profileID).getRegToke();
+            case CUSTOMER:
+                regToken = restaurantAPI.getCustomerByID(profileID).getRegToken();
+        }
+        return regToken;
+    }
+
+    @ApiMethod(name = "addRegTokenToProfile", path = "addRegTokenToProfile", httpMethod = ApiMethod.HttpMethod.POST)
+    public void addRegTokenToProfile(@Named("profileType") ProfileType type,
+                                     @Named("profileID") String profileID,
+                                     @Named("regToken") String regToken) {
+
+        switch (type) {
+            case RESTAURANT:
+                Restaurant restaurant = restaurantAPI.getRestaurantByID(profileID);
+                restaurant.regToken = regToken;
+                ObjectifyService.ofy().save().entity(restaurant).now();
+                break;
+            case PHARMACY:
+                Pharmacy pharmacy = pharmacyAPI.getPharmacyByID(profileID);
+                pharmacy.regToke = regToken;
+                ObjectifyService.ofy().save().entity(pharmacy).now();
+
+            case CUSTOMER:
+                Customer customer = restaurantAPI.getCustomerByID(profileID);
+                customer.regToken=regToken;
+                ObjectifyService.ofy().save().entity(customer).now();
+        }
+    }
 }

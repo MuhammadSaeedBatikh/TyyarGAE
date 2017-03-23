@@ -21,9 +21,11 @@ public class Driver {
     public String phone ;
     public String vehicle;
     public double balance;
+
     public int rate;
+
     @Index
-    public Location currentLocation;
+    public Location currentLocation;//TODO check if indexing Locations allowed
     public String imageURL;
     @Index
     public boolean idle;

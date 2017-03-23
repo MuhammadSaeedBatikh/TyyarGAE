@@ -27,6 +27,7 @@ public class Pharmacy {
     public Location location;
     public List<PharmacyCategory> categories = new ArrayList<>();
     public String imageURL;
+    public String regToke;
     @Index
     public int pricing;
     public int rating;
@@ -44,4 +45,8 @@ public class Pharmacy {
     }
 
     public Pharmacy() {}
+
+    public String getRegToke() {
+        return regToke;
+    }
 }

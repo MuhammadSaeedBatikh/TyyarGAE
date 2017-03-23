@@ -1,6 +1,7 @@
 package com.example.YourPc.myapplication.backend.restuarant.order;
 
 import com.example.YourPc.myapplication.backend.helpers.IdHelper;
+import com.example.YourPc.myapplication.backend.helpers.ProfileType;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
@@ -14,18 +15,20 @@ import java.util.List;
 public class DeliveryRequest {
     @Id
     public String id;
+    public ProfileType merchantType;
     public ListOfOrders listOfOrders;
     public String customerID = "";
-    public String restaurantID = "";
-    public String customerLocationID;
-    public String driverID ="default";
+    public String merchantID = "";
+    public String customerLocationID="";
+    public String driverID ="";
     public boolean confirmPickUP=false;
     public List<String> driversWhoRefusedIDs=new ArrayList<>();
-    public DeliveryRequest(ListOfOrders listOfOrders, String customerID,
-                           String restaurantID, String customerLocationID) {
+    public DeliveryRequest(ProfileType merchantType,ListOfOrders listOfOrders, String customerID,
+                           String merchantID, String customerLocationID) {
+        this.merchantType=merchantType;
         this.listOfOrders = listOfOrders;
         this.customerID = customerID;
-        this.restaurantID = restaurantID;
+        this.merchantID = merchantID;
         this.customerLocationID = customerLocationID;
         this.id = IdHelper.generateDeliveryRequestKey(genertaeDistinguisher());
     }
@@ -37,8 +40,8 @@ public class DeliveryRequest {
         String distinguisher ="" ;
         int length = customerID.length()/2;
         distinguisher+=customerID.substring(length-2,length+2);
-        int restLength =restaurantID.length()/2;
-        distinguisher+=restaurantID.substring(restLength-2,restLength+2);
+        int restLength =merchantID.length()/2;
+        distinguisher+=merchantID.substring(restLength-2,restLength+2);
         return distinguisher;
     }
 

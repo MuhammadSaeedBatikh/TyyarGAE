@@ -4,9 +4,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,32 +20,30 @@ import javax.servlet.http.HttpServletResponse;
 public class FireBaseServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String regToken = request.getParameter("cWDKF4SdJIM:APA91bHBp3Y421OB1CSQ4-HM6-gh8jZMtYR1aSeRuDhzCC15Djc2Mx0y6nWimqlw0M-bV_oNy1Jopwx7PLv5AWX8x_y5nh41l1oCLUwP5hd70FAI5lBh9nXRGgnfDDfQ8G8GPj_Bc7ma");
-        String body = "aaa";
-        System.out.println(body);
-        String rawData = createJSONNotification(regToken,body).toString();
+        String regToken = request.getParameter("RegToken");
+        String body = request.getParameter("body");
+        JSONObject jsonObject = createJSONNotification(regToken, body);
         String type = "application/json";
-        System.out.println(rawData);
-        String encodedData = URLEncoder.encode(rawData,"UTF-8");
-        System.out.println(encodedData);
-        URL u = new URL("https://fcm.googleapis.com/fcm/send");
-        HttpURLConnection conn = (HttpURLConnection) u.openConnection();
-        conn.setDoOutput(true);
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty( "Content-Type", type );
-        conn.setRequestProperty( "Content-Length", String.valueOf(encodedData.length()));
-        conn.setRequestProperty("","");
-        OutputStream os = conn.getOutputStream();
-        System.out.println(os);
-        os.write(encodedData.getBytes());
-        System.out.println(conn.getResponseMessage());
+        URL url = new URL("https://fcm.googleapis.com/fcm/send");
+        String webApiKey = "key=AAAAPWYElsU:APA91bEqM1sidTSZZU064AZYZyUFeYBBD05Sr0nTlWGECo5T9OfnMMA9-xPVdtU-UhzgVDuitJFgh5DUxHrwkNxQiKZeqQ5X3zqkZOCuuGCfj_Gh1Hied0bdTS85etKycJ4oonOiX_E0";
+        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+        httpURLConnection.setRequestProperty("Content-Type", type);
+        httpURLConnection.setRequestMethod("POST");
+        httpURLConnection.setRequestProperty("Authorization",webApiKey);
+        httpURLConnection.setDoOutput(true);
+        OutputStream outputStream = httpURLConnection.getOutputStream();
+        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, "UTF-8");
+        outputStreamWriter.write(jsonObject.toString());
+        outputStreamWriter.close();
+        System.out.println(httpURLConnection.getResponseCode() + "  "
+                + httpURLConnection.getResponseMessage());
     }
 
     public JSONObject createJSONNotification(String regToken, String body) {
         JSONObject json = new JSONObject();
         JSONObject dataJson = new JSONObject();
         dataJson.put("body", body);
-        dataJson.put("title", "thi is a title");
+        dataJson.put("title", "this is a title");
         json.put("notification", dataJson);
         json.put("to", regToken);
         return json;

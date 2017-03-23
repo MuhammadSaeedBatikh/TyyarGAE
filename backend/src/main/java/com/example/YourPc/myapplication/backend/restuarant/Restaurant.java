@@ -28,6 +28,7 @@ public class Restaurant {
     public Location location;
     public List<Category> categories = new ArrayList<>();
     public String imageURL;
+    public String regToken;
     @Index
     public int pricing;
     public int rating;
@@ -103,6 +104,10 @@ public class Restaurant {
     public Restaurant addCategory(Category category) {
         this.categories.add(category);
         return this;
+    }
+
+    public String getRegToken() {
+        return regToken;
     }
 }
 

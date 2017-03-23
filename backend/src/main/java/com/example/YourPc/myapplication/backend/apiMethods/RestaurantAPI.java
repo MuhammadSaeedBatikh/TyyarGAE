@@ -50,8 +50,8 @@ public class RestaurantAPI {
         return customer;
     }
 
-    @ApiMethod(name = "loadCustomer", httpMethod = ApiMethod.HttpMethod.GET)
-    public Customer loadCustomer(@Named("id") String id) {
+    @ApiMethod(name = "getCustomerByID",path ="getCustomerByID", httpMethod = ApiMethod.HttpMethod.GET)
+    public Customer getCustomerByID(@Named("id") String id) {
         Key<Customer> key = Key.create(Customer.class, id);
         System.out.println(key);
         Customer customer = null;
@@ -71,7 +71,7 @@ public class RestaurantAPI {
 
     @ApiMethod(name = "updateCustomerPassword", path = "updateCustomerPassword", httpMethod = ApiMethod.HttpMethod.POST)
     public Customer updateCustomerPassword(@Named("password") String newPassword, @Named("ID") String customerID) {
-        Customer customer = loadCustomer(customerID);
+        Customer customer = getCustomerByID(customerID);
         customer.password = newPassword;
         ObjectifyService.ofy().save().entity(customer).now();
         return customer;
@@ -79,7 +79,7 @@ public class RestaurantAPI {
 
     @ApiMethod(name = "updateCustomerEmail", path = "updateCustomerEmail", httpMethod = ApiMethod.HttpMethod.POST)
     public Customer updateCustomerEmail(@Named("email") String newEmail, @Named("ID") String customerID) {
-        Customer customer = loadCustomer(customerID);
+        Customer customer = getCustomerByID(customerID);
         customer.email = newEmail;
         ObjectifyService.ofy().save().entity(customer).now();
         return customer;
@@ -266,6 +266,7 @@ public class RestaurantAPI {
         Restaurant restaurant = getRestaurantByID(restaurantID);
         return new BooleanWrapper(restaurant.active);
     }
+
 
     /*  @ApiMethod(name = "createRandomCustomer",httpMethod = ApiMethod.HttpMethod.POST)
     public  List<Customer> createRandomCustomer(){
