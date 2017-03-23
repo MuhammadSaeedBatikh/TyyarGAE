@@ -36,7 +36,7 @@ public class PharmacyAPI {
         return pharmacyAPIInstace;
     }
 
-    @ApiMethod(name = "createPharmacy", path = "createPharmacy", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "createPharmacy", path = "createPharmacy", httpMethod = ApiMethod.HttpMethod.GET)
     public Pharmacy createPharmacy(@Named("name") String name, @Named("password") String password,
                                    @Named("email") String email, @Named("phone") String phone,
                                    @Named("city") String city, @Named("imageURL") String imageURL
@@ -46,28 +46,26 @@ public class PharmacyAPI {
         return pharmacy;
     }
 
-    @ApiMethod(name = "createCategory", path = "createCategory", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "createCategory", path = "createCategory", httpMethod = ApiMethod.HttpMethod.GET)
     public PharmacyCategory createCategory(@Named("name") String name, @Named("description") String description) {
         PharmacyCategory pharmacyCategory = new PharmacyCategory(name, description);
         ObjectifyService.ofy().save().entity(pharmacyCategory).now();
         return pharmacyCategory;
     }
 
-    @ApiMethod(name = "getCategoryByID", path = "getCategoryByID", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "getCategoryByID", path = "getCategoryByID", httpMethod = ApiMethod.HttpMethod.GET)
     public PharmacyCategory getCategoryByID(@Named("id") String id) {
         Key<PharmacyCategory> categoryKey = Key.create(PharmacyCategory.class, id);
-        PharmacyCategory pharmacyCategory = ObjectifyService.ofy().load().key(categoryKey).now();
-        return pharmacyCategory;
+        return ObjectifyService.ofy().load().key(categoryKey).now();
     }
 
-    @ApiMethod(name = "getPharmacyByID", path = "getPharmacyByID", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "getPharmacyByID", path = "getPharmacyByID", httpMethod = ApiMethod.HttpMethod.GET)
     public Pharmacy getPharmacyByID(@Named("id") String id) {
         Key<Pharmacy> pharmacyKey = Key.create(Pharmacy.class, id);
-        Pharmacy pharmacy = ObjectifyService.ofy().load().key(pharmacyKey).now();
-        return pharmacy;
+        return ObjectifyService.ofy().load().key(pharmacyKey).now();
     }
 
-    @ApiMethod(name = "addCategoryToPharmacy", path = "addCategoryToPharmacy", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "addCategoryToPharmacy", path = "addCategoryToPharmacy", httpMethod = ApiMethod.HttpMethod.GET)
     public Pharmacy addCategoryToPharmacy(@Named("pharmacyID") String pharmacyID,
                                             @Named("categoryID") String categoryID) {
         Pharmacy pharmacy = getPharmacyByID(pharmacyID);
@@ -76,13 +74,13 @@ public class PharmacyAPI {
         ObjectifyService.ofy().save().entity(pharmacy).now();
         return pharmacy;
     }
-    @ApiMethod(name = "getPharmacyByName", path = "getPharmacyByName", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "getPharmacyByName", path = "getPharmacyByName", httpMethod = ApiMethod.HttpMethod.GET)
     public List<Pharmacy> getPharmacyByName(@Named("name") String name) {
         Query<Pharmacy> query = ObjectifyService.ofy().load().type(Pharmacy.class).filter("name =", name);
         return query.list();
     }
 
-    @ApiMethod(name = "createProduct", path = "createProduct", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "createProduct", path = "createProduct", httpMethod = ApiMethod.HttpMethod.GET)
     public Product createProduct(@Named("name") String name, @Named("price") double price,
                                  @Named("description")String description) {
         Product product = new Product(name,price, description);
@@ -90,7 +88,7 @@ public class PharmacyAPI {
         return product;
     }
 
-    @ApiMethod(name = "addProductToCategory", path = "addProductToCategory", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "addProductToCategory", path = "addProductToCategory", httpMethod = ApiMethod.HttpMethod.GET)
     public PharmacyCategory addProductToCategory(@Named("categoryID") String categoryID,
                                                  @Named("productID") String productID) {
         PharmacyCategory pharmacyCategory = getCategoryByID(categoryID);
@@ -99,13 +97,12 @@ public class PharmacyAPI {
         ObjectifyService.ofy().save().entity(pharmacyCategory).now();
         return pharmacyCategory;
     }
-    @ApiMethod(name = "getProductByID", path = "getProductByID", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "getProductByID", path = "getProductByID", httpMethod = ApiMethod.HttpMethod.GET)
     public Product getProductByID(@Named("id") String id) {
         Key<Product> productKey = Key.create(Product.class, id);
-        Product product = ObjectifyService.ofy().load().key(productKey).now();
-        return product;
+        return ObjectifyService.ofy().load().key(productKey).now();
     }
-    @ApiMethod(name = "changeProductAvailability", path = "changeProductAvailability", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "changeProductAvailability", path = "changeProductAvailability", httpMethod = ApiMethod.HttpMethod.GET)
     public Product changeProductAvailability(@Named("available") boolean available ,
                                              @Named("productID") String productID){
         Key<Product> productKey = Key.create(Product.class,productID);
@@ -114,7 +111,7 @@ public class PharmacyAPI {
         ObjectifyService.ofy().save().entity(product).now();
         return product;
     }
-    @ApiMethod(name = "getAllPharmacies", path = "getAllPharmacies", httpMethod = ApiMethod.HttpMethod.POST)
+    @ApiMethod(name = "getAllPharmacies", path = "getAllPharmacies", httpMethod = ApiMethod.HttpMethod.GET)
     public List<PharmacyView> getAllPharmacies(@Named("from") int from, @Named("to") int to) {
         List<Pharmacy> pharmacyList = ObjectifyService.ofy().load().type(Pharmacy.class).list();
         int size = pharmacyList.size();
