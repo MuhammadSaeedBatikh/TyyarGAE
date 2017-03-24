@@ -9,7 +9,6 @@ public class DriverView {
     String driverID;
     public String name ;
     public Location currentLocation;
-
     public DriverView(String driverID, String name, Location currentLocation) {
         this.driverID = driverID;
         this.name = name;

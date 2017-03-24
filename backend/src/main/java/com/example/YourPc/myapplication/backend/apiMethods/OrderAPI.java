@@ -70,24 +70,33 @@ public class OrderAPI {
         Query<Driver> driverQuery = ObjectifyService.ofy().load().type(Driver.class).filter("city =", city)
                 .filter("idle =", true);
 
-        List<Driver> driverList = new ArrayList<>();
+        List<Driver> driverList = driverQuery.list();
+        List<String> driverIDsList= new ArrayList<>();
+        //getting list of all active drivers IDs
         for (Driver driver : driverList) {
-            driverQuery.filter("driverID !=", driver.driverID);
+            driverIDsList.add(driver.driverID);
+        }
+        List<String> driversWhoRefuesdIDs= deliveryRequest.driversWhoRefusedIDs;
+        //filtering out drivers who refused
+        for (String id : driversWhoRefuesdIDs) {
+            driverIDsList.remove(id);
         }
         //perform Checking here
         //use google Maps API
         try {
-            Driver driver = driverList.get(0);
-            deliveryRequest.driverID = driver.driverID;
+            String driverID = driverIDsList.get(0);
+            updateDriverState(false,driverID);
+            deliveryRequest.driverID = driverID;
             ObjectifyService.ofy().save().entity(deliveryRequest).now();
+            sendNotificationByID(driverID,"pick up",ProfileType.DRIVER);
             return deliveryRequest;
         } catch (Exception e) {
             return null;
         }
     }
 
-    @ApiMethod(name = "driverRefusesOrder", path = "driverRefusesOrder", httpMethod = ApiMethod.HttpMethod.GET)
-    public DeliveryRequest driverRefusesOrder(@Named("deliveryRequestID") String deliveryRequestID,
+    @ApiMethod(name = "driverRefuseOrder", path = "driverRefuseOrder", httpMethod = ApiMethod.HttpMethod.GET)
+    public DeliveryRequest driverRefuseOrder(@Named("deliveryRequestID") String deliveryRequestID,
                                               @Named("driverID") String driverID) {
         DeliveryRequest deliveryRequest = getDeliveryRequestByID(deliveryRequestID);
         deliveryRequest.driversWhoRefusedIDs.add(driverID);
@@ -135,12 +144,21 @@ public class OrderAPI {
         return driver;
     }
 
-    @ApiMethod(name = "confirmPickUp", path = "confirmPickUp", httpMethod = ApiMethod.HttpMethod.GET)
-    public DeliveryRequest confirmPickUp(@Named("deliveryRequestID") String deliveryRequestID) {
+    @ApiMethod(name = "driverConfirmPickUp", path = "driverConfirmPickUp", httpMethod = ApiMethod.HttpMethod.GET)
+    public StringWrapper driverConfirmPickUp(@Named("deliveryRequestID") String deliveryRequestID) {
         DeliveryRequest deliveryRequest = getDeliveryRequestByID(deliveryRequestID);
-        deliveryRequest.confirmPickUP = true;
+        deliveryRequest.driverConfirmPickUP= true;
         updateDriverState(false, deliveryRequest.driverID);
-        return deliveryRequest;
+        ObjectifyService.ofy().save().entity(deliveryRequest).now();//apply changes
+        return new StringWrapper("ok");
+    }
+    @ApiMethod(name = "customerConfirmPickUp", path = "customerConfirmPickUp", httpMethod = ApiMethod.HttpMethod.GET)
+    public StringWrapper customerConfirmPickUp(@Named("deliveryRequestID") String deliveryRequestID){
+        DeliveryRequest deliveryRequest = getDeliveryRequestByID(deliveryRequestID);
+        deliveryRequest.driverConfirmPickUP=true;
+        updateDriverState(true,deliveryRequestID);
+        ObjectifyService.ofy().save().entity(deliveryRequest).now();
+        return new StringWrapper("ok");
     }
     //API method wrapper for sendNOtification method in firebase helper
     @ApiMethod(name = "sendNotificationByID", path = "sendNotificationByID", httpMethod = ApiMethod.HttpMethod.GET)
@@ -189,8 +207,10 @@ public class OrderAPI {
                 break;
             case PHARMACY:
                 regTokenList = pharmacyAPI.getPharmacyByID(profileID).getRegTokenList();
+                break;
             case CUSTOMER:
                 regTokenList = restaurantAPI.getCustomerByID(profileID).getRegTokenList();
+                break;
         }
         return regTokenList;
     }

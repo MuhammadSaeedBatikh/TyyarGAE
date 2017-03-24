@@ -21,7 +21,8 @@ public class DeliveryRequest {
     public String merchantID = "";
     public String customerLocationID="";
     public String driverID ="";
-    public boolean confirmPickUP=false;
+    public boolean driverConfirmPickUP =false;
+    public boolean customerConfirmPickUP=false;
     public List<String> driversWhoRefusedIDs=new ArrayList<>();
     public DeliveryRequest(ProfileType merchantType,ListOfOrders listOfOrders, String customerID,
                            String merchantID, String customerLocationID) {
