@@ -15,6 +15,7 @@ public class Item {
     @Id
     public String id;
     public String name;
+    //todo item description .. change UI and constructor
     public List<Option> options = new ArrayList<>();
     public Item() {
     } //default constructor for Entit initalization

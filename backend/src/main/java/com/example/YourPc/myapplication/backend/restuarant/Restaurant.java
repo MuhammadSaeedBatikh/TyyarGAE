@@ -28,7 +28,7 @@ public class Restaurant {
     public Location location;
     public List<Category> categories = new ArrayList<>();
     public String imageURL;
-    public String regToken;
+    public List<String>regTokenList = new ArrayList<>();
     @Index
     public int pricing;
     public int rating;
@@ -106,9 +106,10 @@ public class Restaurant {
         return this;
     }
 
-    public String getRegToken() {
-        return regToken;
+    public List<String> getRegTokenList() {
+        return regTokenList;
     }
+
 }
 
 

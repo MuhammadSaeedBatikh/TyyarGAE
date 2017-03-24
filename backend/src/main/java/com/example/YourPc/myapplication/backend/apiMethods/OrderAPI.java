@@ -8,9 +8,9 @@ import com.example.YourPc.myapplication.backend.pharmacy.Pharmacy;
 import com.example.YourPc.myapplication.backend.profiles.Customer;
 import com.example.YourPc.myapplication.backend.profiles.Driver;
 import com.example.YourPc.myapplication.backend.restuarant.Restaurant;
-import com.example.YourPc.myapplication.backend.restuarant.RestaurantView;
 import com.example.YourPc.myapplication.backend.restuarant.order.DeliveryRequest;
 import com.example.YourPc.myapplication.backend.restuarant.order.Order;
+import com.example.YourPc.myapplication.backend.returnWrappers.StringWrapper;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.Named;
@@ -142,74 +142,116 @@ public class OrderAPI {
         updateDriverState(false, deliveryRequest.driverID);
         return deliveryRequest;
     }
-
+    //API method wrapper for sendNOtification method in firebase helper
     @ApiMethod(name = "sendNotificationByID", path = "sendNotificationByID", httpMethod = ApiMethod.HttpMethod.GET)
-    public Object sendNotificationByID(@Named("profileID") String profileID,
+    public StringWrapper sendNotificationByID(@Named("profileID") String profileID,
                                        @Named("message") String message,
-                                       @Named("profileType") ProfileType type) throws IOException {
-        String regToken = getRegistrationToken(type, profileID);
-        FireBaseHelper.sendNotification(regToken, message);
-        return new Object();
+                                       @Named("profileType") ProfileType type){
+
+        List<String> regTokenList = getRegistrationTokenList(type, profileID);
+        for (String regToken : regTokenList) {
+            try {
+                sendNotificationByRegToken(regToken,message);
+            } catch (IOException e) {
+                return new StringWrapper(e.getMessage());
+            }
+        }
+        return new StringWrapper("ok");
     }
 
-    //=====================
     //passing unsupported parameter !!
     @ApiMethod(name = "sendDeliveryRequest", path = "sendDeliveryRequest", httpMethod = ApiMethod.HttpMethod.GET)
-    public Object sendDeliveryRequest(DeliveryRequest deliveryRequest) throws IOException {
-        String regToken = getRegistrationToken(deliveryRequest.merchantType,
+    public StringWrapper sendDeliveryRequest(DeliveryRequest deliveryRequest) {
+        StringWrapper stringWrapper = new StringWrapper("ok");
+        List<String> regTokenList = getRegistrationTokenList(deliveryRequest.merchantType,
                 deliveryRequest.merchantID);
-        return sendNotificationByRegToken(regToken, "Order");
+        for (String regToken : regTokenList) {
+            try {
+                sendNotificationByRegToken(regToken,"Order");
+            } catch (IOException e) {
+                return new StringWrapper(e.getMessage());
+             }
+        }
+        return stringWrapper;
     }
 
-    //=====================
     @ApiMethod(name = "sendNotificationByRegToken", path = "sendNotificationByRegToken", httpMethod = ApiMethod.HttpMethod.GET)
     public Object sendNotificationByRegToken(@Named("regToken") String regToken,
                                              @Named("message") String message) throws IOException {
         FireBaseHelper.sendNotification(regToken, message);
         return new Object();
     }
-
-    @ApiMethod(name = "sendNotificationByRegToken2", path = "sendNotificationByRegToken2", httpMethod = ApiMethod.HttpMethod.GET)
-    public RestaurantView sendNotificationByRegToken2(@Named("zregTok") String regTok,
-                                                      @Named("amess") String mess) throws IOException {
-        FireBaseHelper.sendNotification(regTok, mess);
-        return new RestaurantView("sd", "jjj", "dksajk");
-    }
-
-    private String getRegistrationToken(ProfileType type, String profileID) {
-        String regToken = null;
+    private List<String> getRegistrationTokenList(ProfileType type, String profileID) {
+        List<String> regTokenList = null;
         switch (type) {
             case RESTAURANT:
-                regToken = restaurantAPI.getRestaurantByID(profileID).getRegToken();
+                regTokenList = restaurantAPI.getRestaurantByID(profileID).getRegTokenList();
                 break;
             case PHARMACY:
-                regToken = pharmacyAPI.getPharmacyByID(profileID).getRegToke();
+                regTokenList = pharmacyAPI.getPharmacyByID(profileID).getRegTokenList();
             case CUSTOMER:
-                regToken = restaurantAPI.getCustomerByID(profileID).getRegToken();
+                regTokenList = restaurantAPI.getCustomerByID(profileID).getRegTokenList();
         }
-        return regToken;
+        return regTokenList;
     }
 
     @ApiMethod(name = "addRegTokenToProfile", path = "addRegTokenToProfile", httpMethod = ApiMethod.HttpMethod.GET)
-    public void addRegTokenToProfile(@Named("profileType") ProfileType type,
-                                     @Named("profileID") String profileID,
-                                     @Named("regToken") String regToken) {
-
+    public StringWrapper addRegTokenToProfile(@Named("profileType") ProfileType type,
+                                              @Named("profileID") String profileID,
+                                              @Named("regToken") String regToken) {
+            StringWrapper stringWrapper = new StringWrapper("ok");
         switch (type) {
             case RESTAURANT:
                 Restaurant restaurant = restaurantAPI.getRestaurantByID(profileID);
-                restaurant.regToken = regToken;
+                restaurant.regTokenList.add(regToken);
                 ObjectifyService.ofy().save().entity(restaurant).now();
                 break;
             case PHARMACY:
                 Pharmacy pharmacy = pharmacyAPI.getPharmacyByID(profileID);
-                pharmacy.regToke = regToken;
+                pharmacy.regTokenList.add(regToken);
                 ObjectifyService.ofy().save().entity(pharmacy).now();
-
+                break;
             case CUSTOMER:
                 Customer customer = restaurantAPI.getCustomerByID(profileID);
-                customer.regToken = regToken;
+                customer.regTokenList.add(regToken);
                 ObjectifyService.ofy().save().entity(customer).now();
+                break;
+            case DRIVER:
+                Driver driver = getDriverByID(profileID);
+                driver.regTokenList.add(regToken);
+                ObjectifyService.ofy().save().entity(driver).now();
+                break;
         }
+        return stringWrapper;
+    }
+    @ApiMethod(name = "removeRegTokenByID", path = "removeRegTokenByID", httpMethod = ApiMethod.HttpMethod.GET)
+    public StringWrapper removeRegToken(@Named("profileType") ProfileType type,
+                                        @Named("profileID") String profileID,
+                                        @Named("regToken") String regToken){
+            StringWrapper stringWrapper = new StringWrapper("ok");
+            switch (type) {
+                case RESTAURANT:
+                    Restaurant restaurant = restaurantAPI.getRestaurantByID(profileID);
+                    restaurant.regTokenList.remove(regToken);
+                    ObjectifyService.ofy().save().entity(restaurant).now();
+                    break;
+                case PHARMACY:
+                    Pharmacy pharmacy = pharmacyAPI.getPharmacyByID(profileID);
+                    pharmacy.regTokenList.remove(regToken);
+                    ObjectifyService.ofy().save().entity(pharmacy).now();
+                    break;
+                case CUSTOMER:
+                    Customer customer = restaurantAPI.getCustomerByID(profileID);
+                    customer.regTokenList.remove(regToken);
+                    ObjectifyService.ofy().save().entity(customer).now();
+                    break;
+                case DRIVER:
+                    Driver driver = getDriverByID(profileID);
+                    driver.regTokenList.remove(regToken);
+                    ObjectifyService.ofy().save().entity(driver).now();
+                    break;
+            }
+            return stringWrapper;
+
     }
 }

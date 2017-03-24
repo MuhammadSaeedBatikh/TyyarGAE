@@ -6,6 +6,9 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Muhammad Saeed on 2/11/2017.
  */
@@ -21,7 +24,7 @@ public class Driver {
     public String phone ;
     public String vehicle;
     public double balance;
-
+    public List<String> regTokenList = new ArrayList<>();
     public int rate;
 
     @Index
@@ -76,5 +79,9 @@ public class Driver {
 
     public int getRate() {
         return rate;
+    }
+
+    public List<String> getRegTokenList() {
+        return regTokenList;
     }
 }

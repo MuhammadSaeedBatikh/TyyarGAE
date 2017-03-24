@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 .setGoogleClientRequestInitializer(clientRequest -> clientRequest.setDisableGZipContent(false))
                 .build();
 
-        return orderAPI.sendNotificationByRegToken2("from AS"
+        return orderAPI.sendNotificationByRegToken("from AS"
                 , "chaLHyNe-tE:APA91bFFohR87C3F7KsPPL0j32UrI-RUml0c2EFvZuHe3pHMEfJ2LcxE19-T2LLKuj-7-2hz35htzNqu_Dfk6hEwpHH8jTdW3S4SYAZiI8uU-uihPrglyCeTewSDwG3jbvT8Ph9SX0FQ")
                 .execute();
     }

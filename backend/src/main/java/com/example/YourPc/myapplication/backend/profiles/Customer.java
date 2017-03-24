@@ -25,7 +25,7 @@ public class Customer {
     public String phone;
     public List<Review> reviews = new ArrayList<>();
     public List<Location> locations = new ArrayList<>();
-    public String regToken;
+    public List<String> regTokenList;
 
     public Customer() {
         System.out.println("created by calling empty constructor");
@@ -71,8 +71,8 @@ public class Customer {
         return locations;
     }
 
-    public String getRegToken() {
-        return regToken;
+    public List<String> getRegTokenList() {
+        return regTokenList;
     }
 }
 
