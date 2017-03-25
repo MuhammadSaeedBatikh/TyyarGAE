@@ -9,3 +9,6 @@
 .externalNativeBuild
 /backend/build/
 /build/
+### AppEngine template
+# Google App Engine generated folder
+appengine-generated/
