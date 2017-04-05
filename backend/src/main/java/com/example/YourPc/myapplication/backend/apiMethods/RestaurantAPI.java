@@ -8,6 +8,7 @@ import com.example.YourPc.myapplication.backend.restuarant.RestaurantView;
 import com.example.YourPc.myapplication.backend.restuarant.menu.Category;
 import com.example.YourPc.myapplication.backend.restuarant.menu.Choice;
 import com.example.YourPc.myapplication.backend.restuarant.menu.Item;
+import com.example.YourPc.myapplication.backend.restuarant.menu.MenuView;
 import com.example.YourPc.myapplication.backend.restuarant.menu.Option;
 import com.example.YourPc.myapplication.backend.returnWrappers.BooleanWrapper;
 import com.google.api.server.spi.config.Api;
@@ -255,8 +256,12 @@ public class RestaurantAPI {
         //TODO later
         return new BooleanWrapper(restaurantState);
     }
-
-
+    @ApiMethod(name = "getRestaurantMenu", path = "getRestaurantMenu", httpMethod = ApiMethod.HttpMethod.GET)
+    public MenuView getRestaurantMenu(@Named("restaurantID") String restaurantID){
+        Restaurant restaurant = getRestaurantByID(restaurantID);
+        MenuView menuView = new MenuView(restaurant);
+        return menuView;
+    }
     @ApiMethod(name = "canCustomerOrder", path = "getRestaurantState", httpMethod = ApiMethod.HttpMethod.GET)
     public BooleanWrapper getRestaurantState(@Named("active") boolean active, @Named("restaurantID") String restaurantID) {
         Restaurant restaurant = getRestaurantByID(restaurantID);
