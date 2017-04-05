@@ -43,15 +43,17 @@ public class RestaurantAPI {
     }
 
     @ApiMethod(name = "createCustomer", httpMethod = ApiMethod.HttpMethod.GET)
-    public Customer createCustomer(@Named("name") String name, @Named("password") String password,
-                                   @Named("email") String email, @Named("mainAddress") String mainAddress
-            , @Named("phone") String phone) {
+    public Customer createCustomer(@Named("name") String name,
+                                   @Named("password") String password,
+                                   @Named("email") String email,
+                                   @Named("mainAddress") String mainAddress,
+                                   @Named("phone") String phone) {
         Customer customer = new Customer(name, password, email, mainAddress, phone);
         ObjectifyService.ofy().save().entity(customer).now();
         return customer;
     }
 
-    @ApiMethod(name = "getCustomerByID",path ="getCustomerByID", httpMethod = ApiMethod.HttpMethod.GET)
+    @ApiMethod(name = "getCustomerByID", path = "getCustomerByID", httpMethod = ApiMethod.HttpMethod.GET)
     public Customer getCustomerByID(@Named("id") String id) {
         Key<Customer> key = Key.create(Customer.class, id);
         System.out.println(key);

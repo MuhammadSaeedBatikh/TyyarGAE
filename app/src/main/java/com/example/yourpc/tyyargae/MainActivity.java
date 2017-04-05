@@ -12,6 +12,7 @@ import com.appspot.tayyar_trial.pharmacyAPI.model.PharmacyViewCollection;
 import com.appspot.tayyar_trial.restaurantAPI.RestaurantAPI;
 import com.appspot.tayyar_trial.restaurantAPI.model.Restaurant;
 import com.appspot.tayyar_trial.restaurantAPI.model.RestaurantViewCollection;
+import com.example.yourpc.tyyargae.okhttp_transport.OkHttpTransport;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -24,9 +25,10 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private Button button;
+    private Button tokenButton;
     private TextView textView;
     private Button notificationButton;
+    private Button addRestaurantButton;
 
 
     @Override
@@ -35,14 +37,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initView();
 
-        Observable.fromCallable(this::addRestaurant)
+        tokenButton.setOnClickListener(v -> Log.d(TAG, "getToken() = " + FirebaseInstanceId.getInstance().getToken()));
+
+
+        addRestaurantButton.setOnClickListener(v -> Observable.fromCallable(this::addRestaurant)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
                     Log.d(TAG, "s = " + s);
-                }, throwable -> Log.e(TAG, "onCreate: ", throwable));
-
-        button.setOnClickListener(v -> Log.d(TAG, "getToken() = " + FirebaseInstanceId.getInstance().getToken()));
+                }, throwable -> Log.e(TAG, "onCreate: ", throwable)));
 
 
         notificationButton.setOnClickListener(v -> {
@@ -65,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Object sendNotification() throws IOException {
-        OrderAPI orderAPI = new OrderAPI.Builder(AndroidHttp.newCompatibleTransport(),
+        OrderAPI orderAPI = new OrderAPI.Builder(new OkHttpTransport(),
+//        OrderAPI orderAPI = new OrderAPI.Builder(AndroidHttp.newCompatibleTransport(),
                 new AndroidJsonFactory(), null)
                 .setRootUrl("http://10.0.2.2:8089/_ah/api/")
                 //                .setRootUrl("http://10.0.2.2:8086/_ah/api/")
@@ -104,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
         return restaurantAPI.getAllRestaurantsOrderedByPricing(0, 5).execute();
     }
 
-
     private Restaurant addRestaurant() throws IOException {
         RestaurantAPI restaurantAPI = new RestaurantAPI.Builder(AndroidHttp.newCompatibleTransport(),
                 new AndroidJsonFactory(), null)
@@ -120,9 +123,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        button = (Button) findViewById(R.id.button);
+        tokenButton = (Button) findViewById(R.id.token_button);
         textView = (TextView) findViewById(R.id.textView);
         notificationButton = (Button) findViewById(R.id.notification_button);
+        addRestaurantButton = (Button) findViewById(R.id.add_restaurant_button);
     }
 
     /*private class EndpointsAsyncTask extends AsyncTask<Object, Object, List<Customer>> {
