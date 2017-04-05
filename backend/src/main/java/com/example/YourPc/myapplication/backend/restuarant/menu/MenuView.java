@@ -1,8 +1,9 @@
 package com.example.YourPc.myapplication.backend.restuarant.menu;
 
+
 import com.example.YourPc.myapplication.backend.restuarant.Restaurant;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,11 +11,19 @@ import java.util.List;
  */
 
 public class MenuView {
-    public HashMap<String,String> menu = new HashMap<>();
+    List<MenuItem> menuItemList = new ArrayList<>();
+
+    public MenuView(Restaurant restaurant) {
+        List<Category> categoryList= restaurant.getCategories();
+        for (Category category : categoryList) {
+            menuItemList.add(new MenuItem(category.getId(),category.getName()));
+        }
+    }
+    /*public HashMap<String,String> menu = new HashMap<>();
     public MenuView(Restaurant restaurant) {
        List<Category> categoryList= restaurant.getCategories();
         for (Category category : categoryList) {
          menu.put(category.getId(),category.getName());
         } 
-    }
+    }*/
 }
